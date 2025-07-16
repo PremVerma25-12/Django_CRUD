@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: radial-gradient(circle at 90% 20%, rgba(212, 175, 55, 0.05) 0%, rgba(10, 10, 10, 0) 30%);
+        }
+        
+        .registration-container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            width: 400px;
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .registration-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, #d4af37, #0a0a0a, #d4af37);
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #d4af37;
+            font-size: 28px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(212, 175, 55, 0.2);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #d4af37;
+            letter-spacing: 0.3px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            background-color: #252525;
+            border: 1px solid #333;
+            border-radius: 6px;
+            box-sizing: border-box;
+            color: #e0e0e0;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #d4af37;
+            outline: none;
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+        }
+        
+        button {
+            background-color: #d4af37;
+            color: #0a0a0a;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #0a0a0a;
+            color: #d4af37;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            border: 1px solid #d4af37;
+            transform: translateY(-2px);
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        a:hover {
+            color: #f0d070;
+            text-decoration: underline;
+            text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Error messages styling */
+        .messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .messages li {
+            background-color: #c62828;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid #ff5252;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Password strength indicator */
+        .password-strength {
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    
+    <div class="registration-container">
+        <h2>Create Account</h2>
+        <form action="{% url 'register' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required oninput="checkPasswordStrength(this.value)">
+                <div class="password-strength">
+                    <div class="strength-meter" id="strength-meter"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" required>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        
+        <div class="login-link">
+            Already have an account? <a href="{% url 'login' %}">Login here</a>
+        </div>
+    </div>
+
+    <script>
+        // Auto-hide error messages after 5 seconds
+        setTimeout(() => {
+            const messages = document.querySelector('.messages');
+            if (messages) {
+                messages.style.transition = 'opacity 0.5s ease';
+                messages.style.opacity = '0';
+                setTimeout(() => messages.remove(), 500);
+            }
+        }, 5000);
+
+        // Password strength indicator
+        function checkPasswordStrength(password) {
+            const meter = document.getElementById('strength-meter');
+            let strength = 0;
+            
+            // Check length
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+            
+            // Check for mixed case
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            
+            // Check for numbers
+            if (/\d/.test(password)) strength++;
+            
+            // Check for special chars
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            // Update meter
+            const colors = ['#ff5252', '#ffab40', '#ffd740', '#9ccc65', '#2e7d32'];
+            const width = strength * 20;
+            meter.style.width = `${width}%`;
+            meter.style.background = colors[strength] || colors[0];
+        }
+    </script>
+</body>
+</html>
